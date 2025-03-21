@@ -312,7 +312,7 @@ const RakeshPortfolio = () => {
           <h2 className="text-4xl font-semibold text-yellow-500 in-view fade-in-up">Contact</h2>
           <p className="text-2xl mt-6 in-view fade-in-up stagger-delay-1">You can reach me via email or phone.</p>
           <p className="text-2xl mt-4 in-view fade-in-up stagger-delay-2">Email: <a href="mailto:mulpurirakesh05@gmail.com" className="text-yellow-500 text-glow">mulpurirakesh05@gmail.com</a></p>
-          <p className="text-2xl mt-4 in-view fade-in-up stagger-delay-3">Phone: <span className="text-yellow-500">9848254165</span></p>
+          <p className="text-2xl mt-4 in-view fade-in-up stagger-delay-3">Phone: <span className="text-yellow-500">+91 9848254165</span></p>
         </div>
       </section>
     </div>
