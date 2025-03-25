@@ -1,8 +1,25 @@
 import { useState, useEffect } from "react";
+import emailjs from '@emailjs/browser';
+import about from "./assets/web_dev_pic.png";
+import hotstar from "./assets/Hotstar.png";
+import bookstore from "./assets/book_store.png";
+import shoestore from "./assets/shoe_store.png";
 
 const RakeshPortfolio = () => {
   // State to track scrolling for animations
   const [scrollY, setScrollY] = useState(0);
+  
+  // Add state for form handling
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+  const [formStatus, setFormStatus] = useState({
+    submitted: false,
+    error: false,
+    message: ''
+  });
   
   useEffect(() => {
     // Improved scroll animation handler with throttling
@@ -34,6 +51,51 @@ const RakeshPortfolio = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+  
+  // Handle input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setFormStatus({ submitted: true, error: false, message: 'Sending...' });
+    
+    // Using your actual EmailJS credentials
+    emailjs.send(
+      'service_91z4eon', 
+      'template_fvnfu9p',
+      {
+        from_name: formData.name,
+        reply_to: formData.email,
+        message: formData.message
+      },
+      'VuoclX_OJsH_Z5mpu'
+    )
+    .then((response) => {
+      console.log('SUCCESS!', response.status, response.text);
+      setFormStatus({
+        submitted: true,
+        error: false,
+        message: 'Message sent successfully!'
+      });
+      // Clear form
+      setFormData({ name: '', email: '', message: '' });
+    })
+    .catch((err) => {
+      console.log('FAILED...', err);
+      setFormStatus({
+        submitted: true,
+        error: true,
+        message: 'Failed to send message. Please try again.'
+      });
+    });
+  };
   
   return (
     <div className="bg-white text-gray-800 font-sans text-xl">
@@ -254,7 +316,7 @@ const RakeshPortfolio = () => {
           <h2 className="text-4xl font-bold text-cyan-600 in-view fade-in-up">About Me</h2>
           <div className="mt-6">
             <div className="relative w-96 h-96 rounded-full overflow-hidden bg-cyan-50 mx-auto mb-6 border-4 border-cyan-300 in-view pulse-effect shadow-lg">
-              <img src="/web_dev_pic.png" alt="Profile Photo" className="object-cover w-full h-full" />
+              <img src={about} alt="Profile Photo" className="object-cover w-full h-full" />
             </div>
             <p className="text-2xl max-w-3xl mx-auto text-gray-700 in-view fade-in-up stagger-delay-2">
               I am a student with a strong foundation in web and software development.
@@ -290,7 +352,7 @@ const RakeshPortfolio = () => {
                 <img 
                   src={`https://cdn.jsdelivr.net/npm/devicon@2.14.0/icons/${skill.icon}`} 
                   alt={`${skill.name} Logo`} 
-                  className="w-28 h-28 skill-icon"
+                  className="w-24 h-24 skill-icon"
                 />
                 <p className="mt-3 text-2xl font-medium text-gray-700">{skill.name}</p>
               </div>
@@ -307,17 +369,17 @@ const RakeshPortfolio = () => {
             {[
               {
                 title: "Hotstar Clone",
-                image: "/Hotstar.png",
+                image: hotstar,
                 description: "The Hotstar Clone project replicates the homepage of Hotstar. It is built using HTML, CSS, and JavaScript, focusing on visually appealing user interface, closely resembling the original streaming platform."
               },
               {
                 title: "Book Store",
-                image: "/book_store.png",
+                image: bookstore,               
                 description: "The Book Store project is an interactive web application built with HTML, CSS, JavaScript, and PHP. It allows users to browse a collection of books and make purchases. The website features a clean, responsive design for a seamless shopping experience."
               },
               {
                 title: "Shoe Store",
-                image: "/shoe_store.png",
+                image: shoestore,
                 description: "The Shoe Store project is a dynamic e-commerce website built using modern web technologies. It features a seamless shopping experience with a user-friendly interface and responsive design."
               }
             ].map((project, index) => (
@@ -341,7 +403,7 @@ const RakeshPortfolio = () => {
         </div>
       </section>
 
-      {/* Contact Section */}
+      {/* Contact Section - Updated with EmailJS functionality */}
       <section id="contact" className="py-24 bg-gradient-to-b from-white to-cyan-50 text-center animate-on-scroll">
         <div className="max-w-screen-lg mx-auto">
           <h2 className="text-4xl font-bold text-cyan-600 in-view fade-in-up">Contact</h2>
@@ -351,11 +413,49 @@ const RakeshPortfolio = () => {
           
           <div className="mt-12 bg-white p-8 rounded-lg shadow-lg max-w-2xl mx-auto in-view fade-in-up animate-on-scroll">
             <h3 className="text-3xl font-semibold text-cyan-600 mb-6">Let's Connect</h3>
-            <form className="flex flex-col space-y-6">
-              <input type="text" placeholder="Your Name" className="p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 text-xl" />
-              <input type="email" placeholder="Your Email" className="p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 text-xl" />
-              <textarea placeholder="Your Message" rows="4" className="p-4 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-cyan-500 text-xl"></textarea>
-              <button type="submit" className="cyan-gradient hover:bg-cyan-600 text-white font-bold py-4 px-6 rounded-lg transition duration-300 text-xl shadow-lg hover:shadow-xl">Send Message</button>
+            
+            {/* Show success/error message if form has been submitted */}
+            {formStatus.submitted && (
+              <div className={`p-4 mb-6 rounded-lg ${formStatus.error ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+                {formStatus.message}
+              </div>
+            )}
+            
+            <form className="flex flex-col space-y-6" onSubmit={handleSubmit}>
+              <input 
+                type="text" 
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                placeholder="Your Name" 
+                className="p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 text-xl" 
+                required 
+              />
+              <input 
+                type="email" 
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="Your Email" 
+                className="p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 text-xl" 
+                required 
+              />
+              <textarea 
+                name="message"
+                value={formData.message}
+                onChange={handleInputChange}
+                placeholder="Your Message" 
+                rows="4" 
+                className="p-4 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-cyan-500 text-xl"
+                required
+              ></textarea>
+              <button 
+                type="submit" 
+                className="cyan-gradient hover:bg-cyan-600 text-white font-bold py-4 px-6 rounded-lg transition duration-300 text-xl shadow-lg hover:shadow-xl"
+                disabled={formStatus.submitted && !formStatus.error}
+              >
+                {(formStatus.submitted && !formStatus.error) ? 'Sent!' : 'Send Message'}
+              </button>
             </form>
           </div>
         </div>
